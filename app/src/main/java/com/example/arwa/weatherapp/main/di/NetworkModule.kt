@@ -1,8 +1,7 @@
 package com.example.arwa.weatherapp.main.di
 
-import com.example.arwa.weatherapp.search_city.data.remote.CityServices
-import com.example.arwa.weatherapp.weather_data.data.remote.NetworkInterceptor
-import com.example.arwa.weatherapp.weather_data.data.remote.WeatherService
+import com.example.arwa.weatherapp.data.source.remote.APIServices
+import com.example.arwa.weatherapp.data.source.remote.NetworkInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,7 +32,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideBaseURl() :String = WeatherService.BASE_URL
+    fun provideBaseURl() :String = APIServices.BASE_URL
 
     @Provides
     @Singleton
@@ -70,10 +69,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideWeatherServices(retrofit: Retrofit): WeatherService = retrofit.create(WeatherService::class.java)
+    fun provideApiServices(retrofit: Retrofit): APIServices = retrofit.create(APIServices::class.java)
 
-    @Provides
-    @Singleton
-    fun provideCityServices(retrofit: Retrofit) : CityServices = retrofit.create(CityServices::class.java)
 
 }

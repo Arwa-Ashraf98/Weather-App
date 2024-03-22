@@ -1,9 +1,9 @@
 package com.example.arwa.weatherapp.main.di
 
-import com.example.arwa.weatherapp.search_city.data.remote.CityRemoteDataSource
-import com.example.arwa.weatherapp.search_city.data.remote.ICityRemoteDataSource
-import com.example.arwa.weatherapp.weather_data.data.remote.IWeatherRemoteSource
-import com.example.arwa.weatherapp.weather_data.data.remote.WeatherRemoteSource
+import com.example.arwa.weatherapp.data.source.local.ILocalDataSource
+import com.example.arwa.weatherapp.data.source.local.LocalDataSource
+import com.example.arwa.weatherapp.data.source.remote.IRemoteDataSource
+import com.example.arwa.weatherapp.data.source.remote.RemoteDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -15,9 +15,9 @@ import dagger.hilt.components.SingletonComponent
 abstract class DataSourceModule {
 
     @Binds
-    abstract fun bindWeatherRemoteDataSource(weatherRemoteSource: WeatherRemoteSource): IWeatherRemoteSource
+    abstract fun bindRemoteDataSource(remoteDataSource: RemoteDataSource): IRemoteDataSource
 
     @Binds
-    abstract fun bindCityRemoteDataSource(cityRemoteDataSource: CityRemoteDataSource): ICityRemoteDataSource
+    abstract fun bindLocalRemoteDataSource(localDataSource: LocalDataSource): ILocalDataSource
 
 }
