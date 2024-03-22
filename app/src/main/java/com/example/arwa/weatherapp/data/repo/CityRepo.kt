@@ -1,6 +1,8 @@
 package com.example.arwa.weatherapp.data.repo
 
 import com.example.arwa.weatherapp.core.ResourceResult
+import com.example.arwa.weatherapp.data.mapper.toCityEntity
+import com.example.arwa.weatherapp.data.mapper.toDomainCity
 import com.example.arwa.weatherapp.data.mapper.toDomainCityItem
 import com.example.arwa.weatherapp.data.models.dto.CityItem
 import com.example.arwa.weatherapp.data.models.entity.CityEntity
@@ -22,26 +24,38 @@ class CityRepo @Inject constructor(
     @Named("defaultDispatcher") private val defaultDispatcher: CoroutineDispatcher
 ) : ICityRepo {
 
-    fun getCity(cityName: String, limit: Int): Flow<ResourceResult<List<DomainCity>>> {
-        return flow<ResourceResult<List<DomainCity>>> {
-            val localData = localDataSource.getCity(cityName)
-            if(localData == null) {
-                val result  = getCityFromRemote(cityName, limit)
+    override suspend fun getCity(cityName: String, limit: Int): Flow<ResourceResult<List<DomainCity>>> {
+        return flow {
+            val localData = getCityFromLocal(cityName)
+            if (localData == null) {
+                when (val result = getCityFromRemote(cityName, limit)) {
+                    is ResourceResult.SUCCESS -> {
+                        val domainCity = result.data.map { it.toDomainCityItem() }
+                        saveCity(result.data[0].toCityEntity())
+                        emit(ResourceResult.SUCCESS(domainCity))
+                    }
 
+                    else -> {
+                        emit(ResourceResult.ERROR(Throwable("Error Getting City")))
+                    }
+                }
             } else {
-
+                val domainCity = listOf(localData.toDomainCity())
+                emit(ResourceResult.SUCCESS(domainCity))
             }
-
 
 
         }.catch { e -> ResourceResult.ERROR(e) }
             .flowOn(defaultDispatcher)
     }
 
-    private suspend fun getCityFromRemote(cityName: String, limit: Int) : ResourceResult<List<CityItem>> {
-        return when(val result = remoteDataSource.getCityData(cityName, limit)) {
+    private suspend fun getCityFromRemote(
+        cityName: String,
+        limit: Int
+    ): ResourceResult<List<CityItem>> {
+        return when (val result = remoteDataSource.getCityData(cityName, limit)) {
             is ResourceResult.SUCCESS -> {
-               ResourceResult.SUCCESS(result.data)
+                ResourceResult.SUCCESS(result.data)
             }
 
             else -> {
@@ -51,42 +65,11 @@ class CityRepo @Inject constructor(
 
     }
 
-
-    override suspend fun getCityDataFromRemote(
-        cityName: String,
-        limit: Int
-    ): Flow<ResourceResult<List<DomainCity>>> {
-        return flow {
-            try {
-                when (val cityResult = remoteDataSource.getCityData(cityName, limit)) {
-                    is ResourceResult.SUCCESS -> {
-                        val domainCityData = cityResult.data.map {
-                            it.toDomainCityItem()
-                        }
-                        emit(ResourceResult.SUCCESS(domainCityData))
-                    }
-
-                    else -> {
-                        emit(ResourceResult.ERROR(Throwable("Failed to fetch City Data")))
-                    }
-                }
-            } catch (e: Exception) {
-                emit(ResourceResult.ERROR(e))
-            }
-        }.catch { e -> emit(ResourceResult.ERROR(e)) }
-            .flowOn(defaultDispatcher)
+    private suspend fun getCityFromLocal(cityName: String): CityEntity? {
+        return localDataSource.getCity(cityName)
     }
 
-    override suspend fun getCityFromLocal(cityName: String): ResourceResult<CityEntity> {
-        val cityEntity = localDataSource.getCity(cityName)
-        return if (cityEntity != null) {
-            ResourceResult.SUCCESS(cityEntity)
-        } else {
-            ResourceResult.ERROR(Throwable("There is no Such City"))
-        }
-    }
-
-    override suspend fun saveCity(cityEntity: CityEntity) {
+    private suspend fun saveCity(cityEntity: CityEntity) {
         return localDataSource.saveCity(cityEntity)
     }
 

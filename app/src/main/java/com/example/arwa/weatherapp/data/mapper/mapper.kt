@@ -35,3 +35,9 @@ fun CityItem.toCityEntity(): CityEntity {
         longitude = this.lon
     )
 }
+
+fun CityEntity.toDomainCity(): DomainCity {
+    return DomainCity(
+        lat = this.latitude, long = this.longitude, name = this.name
+    )
+}

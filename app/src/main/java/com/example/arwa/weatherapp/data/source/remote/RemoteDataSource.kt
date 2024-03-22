@@ -20,7 +20,7 @@ class RemoteDataSource @Inject constructor(
                 if (cityDataResponse.isSuccessful) {
                     ResourceResult.SUCCESS(cityDataResponse.body() ?: emptyList())
                 } else {
-                    ResourceResult.ERROR(Throwable(cityDataResponse.message()))
+                    ResourceResult.ERROR(Throwable(cityDataResponse.errorBody().toString()))
                 }
             }catch (e : Exception){
                 ResourceResult.ERROR(e)
