@@ -1,9 +1,9 @@
 package com.example.arwa.weatherapp.main.di
 
-import com.example.arwa.weatherapp.search_city.domain.interactors.GetCityDataUseCase
-import com.example.arwa.weatherapp.search_city.domain.repo.ICityRepo
-import com.example.arwa.weatherapp.weather_data.domain.interactors.GetWeatherDataUseCase
-import com.example.arwa.weatherapp.weather_data.domain.repo.IWeatherRepo
+import com.example.arwa.weatherapp.domain.interactors.GetCityDataUseCase
+import com.example.arwa.weatherapp.domain.repo.ICityRepo
+import com.example.arwa.weatherapp.domain.interactors.GetWeatherDataUseCase
+import com.example.arwa.weatherapp.domain.repo.IWeatherRepo
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

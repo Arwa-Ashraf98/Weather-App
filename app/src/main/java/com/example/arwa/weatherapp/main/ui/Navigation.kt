@@ -6,8 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.arwa.weatherapp.search_city.presentation.ui.SearchCityScreen
-import com.example.arwa.weatherapp.weather_data.presentation.WeatherDataScreen
+import com.example.arwa.weatherapp.features.search_city.presentation.ui.SearchCityScreen
+import com.example.arwa.weatherapp.features.weather_data.presentation.WeatherDataScreen
 
 
 @Composable
